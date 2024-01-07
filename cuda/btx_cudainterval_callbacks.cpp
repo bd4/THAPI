@@ -94,6 +94,38 @@ void exits_traffic_callback(void *btx_handle, void *usr_data, int64_t ts,
   send_host_message(btx_handle, usr_data, ts, event_class_name, hostname, vpid, vtid, err);
 }
 
+void profiling_callback(void *btx_handle, void *usr_data, int64_t ts,
+                        const char *hostname, int64_t vpid, uint64_t vtid,
+                        CUevent hStart, CUevent hStop) {
+}
+
+inline bool cuResultIsError(CUresult& cuResult) {
+  return (cuResult != CUDA_SUCCESS) && (cuResult != CUDA_ERROR_NOT_READY);
+}
+
+void profiling_callback_results(void *btx_handle, void *usr_data, int64_t ts,
+                                const char *hostname, int64_t vpid, uint64_t vtid,
+                                CUevent hStart, CUevent hStop,
+                                CUresult startStatus, CUresult stopStatus,
+                                CUresult status, float ms) {
+  // Not an Error (cuResult == cudaErrorNotReady)
+  bool err = cuResultIsError(startStatus) || cuResultIsError(stopStatus)
+           || cuResultIsError(status);
+  // printf("traffic exit %d", cuResult);
+  btx_push_message_lttng_device(btx_handle, hostname, vpid, vtid, ts, BACKEND_CUDA,
+                                "kernelname", ms, 0, 0, err,
+                                "metadata");
+  /*
+   *            name const char *
+            - :name: dur :cast_type: uint64_t
+            - :name: did :cast_type: uint64_t
+            - :name: sdid :cast_type: uint64_t
+            - :name: err :cast_type: bt_bool
+            - :name: metadata :cast_type: const char*
+   */
+}
+
+
 void btx_register_usr_callbacks(void *btx_handle) {
   btx_register_callbacks_initialize_component(btx_handle, &btx_initialize_component);
   btx_register_callbacks_finalize_component(btx_handle, &btx_finalize_component);
@@ -104,4 +136,8 @@ void btx_register_usr_callbacks(void *btx_handle) {
   btx_register_callbacks_entries_traffic(btx_handle, &entries_traffic_callback);
   btx_register_callbacks_exits_traffic(btx_handle, &exits_traffic_callback);
 
+  btx_register_callbacks_lttng_ust_cuda_profiling_event_profiling(btx_handle,
+                                                                  &profiling_callback);
+  btx_register_callbacks_lttng_ust_cuda_profiling_event_profiling_results(
+    btx_handle, &profiling_callback_results);
 }
