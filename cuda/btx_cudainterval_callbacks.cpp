@@ -75,10 +75,33 @@ void exits_callback_cudaError_present(void *btx_handle, void *usr_data, int64_t 
   send_host_message(btx_handle, usr_data, ts, event_class_name, hostname, vpid, vtid, err);
 }
 
+void entries_traffic_callback(void *btx_handle, void *usr_data, int64_t ts,
+                      const char *event_class_name, const char *hostname, int64_t vpid,
+                             uint64_t vtid, size_t size) {
+  set_entry_ts(((data_t *)usr_data), {hostname, vpid, vtid}, ts);
+  std::string event_class_name_stripped = strip_event_class_name(event_class_name);
+  btx_push_message_lttng_traffic(btx_handle, hostname, vpid, vtid, ts, BACKEND_CUDA,
+                                 event_class_name_stripped.c_str(), size);
+}
+
+void exits_traffic_callback(void *btx_handle, void *usr_data, int64_t ts,
+                            const char *event_class_name, const char *hostname,
+                            int64_t vpid, uint64_t vtid, CUresult cuResult) {
+
+  // Not an Error (cuResult == cudaErrorNotReady)
+  bool err = (cuResult != CUDA_SUCCESS) && (cuResult != CUDA_ERROR_NOT_READY);
+  // printf("traffic exit %d", cuResult);
+  send_host_message(btx_handle, usr_data, ts, event_class_name, hostname, vpid, vtid, err);
+}
+
 void btx_register_usr_callbacks(void *btx_handle) {
   btx_register_callbacks_initialize_component(btx_handle, &btx_initialize_component);
   btx_register_callbacks_finalize_component(btx_handle, &btx_finalize_component);
   btx_register_callbacks_entries(btx_handle, &entries_callback);
   btx_register_callbacks_exits_cudaError_absent(btx_handle, &exits_callback_cudaError_absent);
   btx_register_callbacks_exits_cudaError_present(btx_handle, &exits_callback_cudaError_present);
+
+  btx_register_callbacks_entries_traffic(btx_handle, &entries_traffic_callback);
+  btx_register_callbacks_exits_traffic(btx_handle, &exits_traffic_callback);
+
 }
