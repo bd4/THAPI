@@ -288,7 +288,8 @@ tests/opencl_dummy_trace.yaml: $(top_srcdir)/utils/gen_dummy_trace.rb opencl_bab
 #https://www.gnu.org/software/make/manual/html_node/Static-Usage.html
 
 TRACE_COMMON = \
-	tests/api_call.thapi_text_pretty
+	tests/api_call.thapi_text_pretty \
+	tests/nd_range_kernel.thapi_text_pretty
 
 BTX_OPENCL_GENERATED_SOURCE_TEST = \
 	btx_source_cl_test/metababel/metababel.h \
