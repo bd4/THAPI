@@ -289,7 +289,8 @@ tests/opencl_dummy_trace.yaml: $(top_srcdir)/utils/gen_dummy_trace.rb opencl_bab
 
 TRACE_COMMON = \
 	tests/api_call.thapi_text_pretty \
-	tests/nd_range_kernel.thapi_text_pretty
+	tests/nd_range_kernel.thapi_text_pretty \
+	tests/enqueue_read_buffer_fast.thapi_text_pretty
 
 BTX_OPENCL_GENERATED_SOURCE_TEST = \
 	btx_source_cl_test/metababel/metababel.h \
