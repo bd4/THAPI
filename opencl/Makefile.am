@@ -292,6 +292,7 @@ TRACE_COMMON = \
 	tests/nd_range_kernel.thapi_text_pretty \
 	tests/enqueue_read_buffer_fast.thapi_text_pretty \
 	tests/interleave_thread.thapi_text_pretty \
+	tests/interleave_process.thapi_text_pretty \
 	tests/results_first.thapi_text_pretty
 
 BTX_OPENCL_GENERATED_SOURCE_TEST = \
