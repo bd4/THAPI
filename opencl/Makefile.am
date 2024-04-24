@@ -293,7 +293,8 @@ TRACE_COMMON = \
 	tests/enqueue_read_buffer_fast.thapi_text_pretty \
 	tests/interleave_thread.thapi_text_pretty \
 	tests/interleave_process.thapi_text_pretty \
-	tests/results_first.thapi_text_pretty
+	tests/results_first.thapi_text_pretty \
+	tests/command_queue.thapi_text_pretty
 
 BTX_OPENCL_GENERATED_SOURCE_TEST = \
 	btx_source_cl_test/metababel/metababel.h \
