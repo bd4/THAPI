@@ -112,9 +112,12 @@ jobs:
       THAPI_TEST_BIN: clinfo
       THAPI_BIN_DIR: ./build/ici/bin
       THAPI_SYNC_DAEMON: ${{ matrix.thapi_sync_daemon }}
+      TEST_EXE: ./integration_tests/sync_daemon_test/mpi_hello_world
     steps:
       - uses: actions/checkout@v4
       - uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: mpich
       - uses: actions/cache@v4
         id: babeltrace2
         env:
@@ -137,6 +140,10 @@ jobs:
         working-directory: build
       - run: make -j install
         working-directory: build
+      - name: build mpi hello
+        run: |
+          mpicxx -o mpi_hello_world mpi_hello_world.cpp
+        working-directory: ./integration_tests/sync_daemon_test
       - name: integration test ${{ matrix.bats_file }}
         run: |
           bats integration_tests/${{ matrix.bats_file }}.bats
