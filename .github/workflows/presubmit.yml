@@ -133,6 +133,10 @@ jobs:
         env:
           THAPI_TEST_BIN: clinfo
           THAPI_BIN_DIR: ./build/ici/bin
+      - name: build mpi hello
+        run: |
+          mpicxx -o mpi_hello_world mpi_hello_world.cpp
+        working-directory: ./integration_tests/sync_daemon_test
       - name: iprof mpi tests sync-fs
         run: |
           bats integration_tests/mpi_test.bats
@@ -151,14 +155,18 @@ jobs:
         run: |
           bats integration_tests/sync_daemon_test.bats
         env:
+          TEST_EXE: ./integration_tests/sync_daemon_test/mpi_hello_world
           THAPI_BIN_DIR: ./build/ici/bin
           THAPI_SYNC_DAEMON: fs
+          HYDRA_LAUNCHER: fork
       - name: test sync_daemon_mpi
         run: |
           bats integration_tests/sync_daemon_test.bats
         env:
+          TEST_EXE: ./integration_tests/sync_daemon_test/mpi_hello_world
           THAPI_BIN_DIR: ./build/ici/bin
           THAPI_SYNC_DAEMON: mpi
+          HYDRA_LAUNCHER: fork
 
   build-in-tree:
     needs: [babeltrace2, pre_job]
