@@ -105,6 +105,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: mpich
       - uses: actions/cache@v4
         id: babeltrace2
         env:
@@ -133,6 +135,9 @@ jobs:
         env:
           THAPI_TEST_BIN: clinfo
           THAPI_BIN_DIR: ./build/ici/bin
+      - name: run mpi
+        run: |
+          mpirun --help
       - name: build mpi hello
         run: |
           mpicxx -o mpi_hello_world mpi_hello_world.cpp
@@ -158,7 +163,6 @@ jobs:
           TEST_EXE: ./integration_tests/sync_daemon_test/mpi_hello_world
           THAPI_BIN_DIR: ./build/ici/bin
           THAPI_SYNC_DAEMON: fs
-          HYDRA_LAUNCHER: fork
       - name: test sync_daemon_mpi
         run: |
           bats integration_tests/sync_daemon_test.bats
@@ -166,7 +170,6 @@ jobs:
           TEST_EXE: ./integration_tests/sync_daemon_test/mpi_hello_world
           THAPI_BIN_DIR: ./build/ici/bin
           THAPI_SYNC_DAEMON: mpi
-          HYDRA_LAUNCHER: fork
 
   build-in-tree:
     needs: [babeltrace2, pre_job]

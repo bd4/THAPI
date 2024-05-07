@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: IPROF_BIN_DIR=/path/to/iprof/bin THAPI_SYNC_DAEMON=mpi|fs TEST_EXE=clinfo test.sh
+# Usage: THAPI_BIN_DIR=/path/to/iprof/bin THAPI_SYNC_DAEMON=mpi|fs TEST_EXE=clinfo test.sh
 
 # Get base real-time signal number
 SIGRTMIN=$(kill -l SIGRTMIN)
